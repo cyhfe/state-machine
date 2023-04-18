@@ -1,19 +1,5 @@
-import {foo} from './comp'
-foo(1,2)
-function echo<T>(arg: T) {
-  console.log(arg);
-}
+import foo from "./a";
 
-export interface A {
-  a: string
-}
+foo();
 
-const a = {
-  a: '1'
-}
-
-export  {
-  foo,
-  echo,
-  a
-}
+export { foo };
