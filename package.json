@@ -12,7 +12,7 @@
     "url": "https://github.com/cyhfe/state-machine.git"
   },
   "scripts": {
-    "dev": "nodemon --exec ts-node --esm src/index.ts",
+    "dev": "nodemon --exec ts-node --esm example.ts",
     "build": "rm -drf dist/* && rollup -c"
   },
   "author": "",
