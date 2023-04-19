@@ -1,41 +1,22 @@
-enum StateValue {
+import { createMachine } from "./src/index";
+
+enum MachineValue {
   OFF = "OFF",
   ON = "ON",
 }
 
-enum ChartEvent {
+enum MachineEvents {
   SWITCH = "SWITCH",
 }
 
-interface MachineEvent {
-  type: ChartEvent.SWITCH;
-  payload: {
-    id: number;
-  };
+interface MachineContext {
+  id: number | null;
 }
 
-interface Chart<T extends string, U extends string> {
-  initialState: T;
+const chart = {
+  initialState: MachineValue.OFF,
   states: {
-    [S in T]?: {
-      actions?: {
-        onEnter?: () => void;
-        onExit?: () => void;
-      };
-      transitions?: {
-        [E in U]?: {
-          target?: T;
-          action?: () => void;
-        };
-      };
-    };
-  };
-}
-
-const chart: Chart<StateValue, ChartEvent> = {
-  initialState: StateValue.OFF,
-  states: {
-    [StateValue.OFF]: {
+    [MachineValue.OFF]: {
       actions: {
         onEnter: () => {
           console.log("enter off");
@@ -45,15 +26,15 @@ const chart: Chart<StateValue, ChartEvent> = {
         },
       },
       transitions: {
-        [ChartEvent.SWITCH]: {
-          target: StateValue.ON,
+        [MachineEvents.SWITCH]: {
+          target: MachineValue.ON,
           action: () => {
             console.log("switch from off to on");
           },
         },
       },
     },
-    [StateValue.ON]: {
+    [MachineValue.ON]: {
       actions: {
         onEnter: () => {
           console.log("enter on");
@@ -63,8 +44,8 @@ const chart: Chart<StateValue, ChartEvent> = {
         },
       },
       transitions: {
-        [ChartEvent.SWITCH]: {
-          target: StateValue.OFF,
+        [MachineEvents.SWITCH]: {
+          target: MachineValue.OFF,
           action: () => {
             console.log("switch from on to off");
           },
@@ -74,78 +55,11 @@ const chart: Chart<StateValue, ChartEvent> = {
   },
 };
 
-function transition(currentState: State, event: MachineEvent) {
-  const nextState =
-    chart.states[currentState.value]?.transitions?.[event.type]?.target;
-  if (!nextState)
-    return {
-      ...currentState,
-      change: false,
-    };
+const machine = createMachine<MachineValue, MachineEvents>(chart);
 
-  chart.states[currentState.value]?.actions?.onExit?.();
-  chart.states[currentState.value]?.transitions?.[event.type]?.action?.();
-  chart.states[nextState]?.actions?.onEnter?.();
-
-  return {
-    value: nextState,
-    change: true,
-    context: {
-      ...currentState.context,
-      id: event.payload.id,
-    },
-  };
-}
-
-const subscriptions = new Set<Function>();
-function subscribe(fn: Function) {
-  subscriptions.add(fn);
-  return function unSubscribe() {
-    subscriptions.delete(fn);
-  };
-}
-
-function notify() {
-  subscriptions.forEach((f) => f());
-}
-
-interface State {
-  value: StateValue;
-  context: {
-    id: null | number;
-  };
-}
-
-let state: State = {
-  value: chart.initialState,
-  context: { id: null },
-};
-
-function send(event: MachineEvent) {
-  const { value, context, change } = transition(state, event);
-  if (change) {
-    state = {
-      value,
-      context,
-    };
-    notify();
-  }
-}
-
-subscribe(() => {
-  console.log(`current state: ${state.value} ${state.context.id}`);
+machine.subscribe(() => {
+  console.log("notify: current state " + machine.state);
 });
 
-send({
-  type: ChartEvent.SWITCH,
-  payload: {
-    id: 1,
-  },
-});
-
-send({
-  type: ChartEvent.SWITCH,
-  payload: {
-    id: 2,
-  },
-});
+machine.send(MachineEvents.SWITCH);
+machine.send(MachineEvents.SWITCH);
