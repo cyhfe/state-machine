@@ -1,3 +1,5 @@
-import foo from "./a";
+function createMachine() {
+  console.log("hello");
+}
 
-export { foo };
+export { createMachine };
