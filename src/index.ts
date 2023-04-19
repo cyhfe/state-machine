@@ -51,7 +51,7 @@ function createMachine<
 
       if (!nextState) {
         return {
-          state: nextState,
+          state: currentState,
           change: false,
         };
       }

@@ -9,10 +9,6 @@ enum MachineEvents {
   SWITCH = "SWITCH",
 }
 
-interface MachineContext {
-  id: number | null;
-}
-
 const chart = {
   initialState: MachineValue.OFF,
   states: {
