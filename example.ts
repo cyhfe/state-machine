@@ -1,4 +1,4 @@
-import { createMachine } from "./src/index";
+import { createMachine } from "./dist/index";
 
 enum MachineValue {
   OFF = "OFF",

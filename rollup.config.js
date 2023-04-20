@@ -5,12 +5,11 @@ import dts from "rollup-plugin-dts";
 export default [
   {
     input: "src/index.ts",
-  
+
     output: [
       {
-        name: "stateMachine",
         file: pkg.main,
-        format: "umd",
+        format: "es",
       },
       {
         file: pkg.browser,
@@ -18,8 +17,8 @@ export default [
         format: "iife",
       },
       {
-        file: pkg.module,
-        format: "es",
+        file: pkg.node,
+        format: "cjs",
       },
     ],
     plugins: [typescript()],
@@ -29,6 +28,4 @@ export default [
     output: [{ file: "dist/index.d.ts", format: "es" }],
     plugins: [dts()],
   },
-]
-
-
+];

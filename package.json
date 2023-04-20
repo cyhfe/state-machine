@@ -3,7 +3,7 @@
   "version": "1.0.5",
   "description": "",
   "main": "dist/index.js",
-  "module": "dist/index.es.js",
+  "node": "dist/index.cjs.js",
   "browser": "dist/index.iife.js",
   "types": "dist/index.d.ts",
   "type": "module",
